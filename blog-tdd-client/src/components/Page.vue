@@ -84,6 +84,8 @@ export default {
         },
          deleteArticle(){
              console.log("ini delete article")
+             console.log(localStorage.getItem("token"))
+             console.log(this.bacaan._id)
          },
          editArticle(){
              this.isEdit = true
@@ -96,15 +98,17 @@ export default {
              axios.put(`http://35.198.243.67/articles?id=${this.bacaan._id}`,{
                  title : this.bacaan.title,
                  content : this.content,
-                 tag : '#cobacoba'
+                 tag : '#'
              },{
                  headers:{
                      token : localStorage.getItem("token")
                  }
              })
-             .then(function(respons){
+             .then((respons)=>{
                  console.log(respons)
                  this.isEdit = false
+                 home.getArticles()
+                 this.$router.replace('/home')
              })
              .catch(function(err){
                  console.log(err.message)
