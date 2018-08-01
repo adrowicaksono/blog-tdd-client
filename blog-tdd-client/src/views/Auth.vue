@@ -1,6 +1,5 @@
 <template>
   <div class="auth">
-    <h1>This is an about page</h1>
     <div class="container">
       <div class="row">
         <form class="col s12 l6">
@@ -53,7 +52,7 @@
 </template>
 
 <script>
-
+import swal from 'sweetalert2'
 import axios from "axios"
 export default {
   data(){
@@ -67,16 +66,28 @@ export default {
   },
   methods:{
     login(){
-      console.log("login", this.loginEmail, this.loginPassword)
-      axios
-      .post('http://35.198.243.67/auth', {
-        email : this.loginEmail,
-        password : this.loginPassword
-      })
-      .then(function(respon){
-        console.log("berhasil login", respon.data.token)
-        localStorage.setItem('token', respon.data.token)
-      })
+      if(!localStorage.getItem("token")){
+        console.log("login", this.loginEmail, this.loginPassword)
+        axios
+        .post('http://35.198.243.67/auth', {
+          email : this.loginEmail,
+          password : this.loginPassword
+        })
+        .then(function(respon){
+          console.log("berhasil login", respon.data.token)
+          localStorage.setItem('token', respon.data.token)
+          this.$router.replace('/home')
+          this.loginEmail = ''
+          this.loginPassword = ''
+        })
+      }else{
+        swal({
+                title: 'info!',
+                text: "you have logged",
+                type: 'info!',
+                confirmButtonText: 'Cool'
+              })
+      }
     },
     register(){
       console.log("register", this.registerName, this.registerPassword, this.registerEmail)
@@ -84,6 +95,7 @@ export default {
         name: this.registerName,
         email : this.registerEmail,
         password : this.registerPassword,
+
       })
       .then(function(result){
         console.log("success register")

@@ -6,20 +6,28 @@
                 create
             </i>
         </a>
-        <a href="#!">
+        <a href="/home#/home">
             <i class="material-icons" v-on:click="deleteArticle">
                 delete_forever
             </i>
         </a>
         <div class="divider"></div>
-        <p>{{bacaan.content}}</p>
+        <p v-html="bacaan.content">{{bacaan.content}}</p>
         <p>{{bacaan.createdAt}}</p>
         <div class="row">              
             <div class="chip" v-for="i in bacaan.tag" :key="{i}">
                 {{i}}
             </div>
         </div> 
-        <button v-on:click="increment"  class="btn btn-flat orange waves-effect waves-light white-text">Click Me</button>
+        <div class="container">
+            <div class="row">
+                <button v-on:click="addComment"  class="btn btn-flat orange waves-effect waves-light white-text">add comments</button>
+            </div>
+            <div class="row">
+                <addComment v-bind:articleId="bacaan._id"/>
+            </div>
+        </div>
+
         <div v-show="isEdit" class="row">    
                 <div id="modal1" class="modal" style="z-index: 1003; display: block; opacity: 1; top: 20%; transform: scaleX(1) scaleY(1);">
                     <div class="modal-content">
@@ -53,20 +61,22 @@
 
 <script>
 import "vue-wysiwyg/dist/vueWysiwyg.css";
+import addComment from '@/components/AddComment.vue'
 import { mapAction } from 'vuex'
 import axios from 'axios'
 
-
 export default {
     props:['bacaan'],
-    
+    components:{
+        addComment,
+    },
     data(){
         return{
             isEdit : false,
             isUpdated : false,
             title : '',
             content : '',
-            tag : ''
+            tag : '',
         }
     },
     watch :{
@@ -77,15 +87,25 @@ export default {
         }
     },
     methods:{
-         increment(){
+         addComment(){
+                // this.$store.dispatch('increment')
                 console.log("halooo")
-                this.$store.dispatch('increment')
                 console.log(this.article)
         },
          deleteArticle(){
              console.log("ini delete article")
              console.log(localStorage.getItem("token"))
              console.log(this.bacaan._id)
+             axios.delete(`http://35.198.243.67/articles?id=${this.bacaan._id}`, {},{
+                 headers: localStorage.getItem("token")
+             })
+             .then(respons=>{
+                 console.log(respons)
+                 this.$router.replace('/home')
+             })
+             .catch(err=>{
+                 console.log(err.message)
+             })
          },
          editArticle(){
              this.isEdit = true

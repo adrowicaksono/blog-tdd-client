@@ -4,8 +4,10 @@
           <div class="navbar-fixed">
               <nav class="orange">
                   <div class="nav-wrapper container">
-                      <router-link to="/">Auth</router-link> | <router-link to="/home">Home</router-link> | <router-link to="/editor">Editor</router-link>
-                      <a href="#!" class="brand-logo">&nbsp;{{getOwner}}{{getCounter}}</a>
+                      <router-link to="/">Auth</router-link> | 
+                      <router-link to="/home">Home</router-link> | 
+                      <router-link to="/editor">Editor</router-link> |
+                      <a  href="/" v-on:click="logout">Logout</a>
                       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a> 
                       <ul class="right hide-on-med-and-down">
                           <li><a href="#" ><i class="mdi-action-perm-identity"></i></a></li>
@@ -71,7 +73,11 @@ export default {
         opennav(){
              console.log("haiii side")
              
+        },
+        logout(){
+            localStorage.clear()
         }
+        
     }
 }
 

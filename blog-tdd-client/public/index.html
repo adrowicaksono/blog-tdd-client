@@ -18,10 +18,19 @@
     <noscript>
       <strong>We're sorry but blog-tdd-client doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="app">
-
-       
-    </div>
+    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+    <script>
+          var config = {
+          apiKey: "AIzaSyCpTNg7xQv6pU1trGveLc7u_QvjVNfQqgg",
+          authDomain: "blogcomments-a8054.firebaseapp.com",
+          databaseURL: "https://blogcomments-a8054.firebaseio.com",
+          projectId: "blogcomments-a8054",
+          storageBucket: "blogcomments-a8054.appspot.com",
+          messagingSenderId: "569303534580"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <div id="app"></div>
     <!-- built files will be auto injected -->
     
   </body>

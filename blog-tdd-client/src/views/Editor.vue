@@ -11,6 +11,15 @@
                 </div>
             </div>
             <div class="row">
+                <img v-bind:src="imgUrl" v-if="isImage"  alt="" srcset="" width="500px" height="500px">
+            </div>
+            <div class="row">
+                <label>File
+            <input type="file" id="file" ref="file" v-on:change="handleFileUpload($event)">
+                </label>
+            <button v-on:click="submitFile" type="submit">Submit</button>
+            </div>
+            <div class="row">
                 <wysiwyg v-model="myHTML" id="editor"></wysiwyg>
             </div>
             <div class="row">
@@ -36,17 +45,21 @@
 import axios from 'axios'
 import { mapState } from 'vuex'
 import "vue-wysiwyg/dist/vueWysiwyg.css";
+import swal from 'sweetalert2'
 
 export default {
+    name: "editor",
     props :['status'],
     data(){
         return{
             title : '',
             myHTML:'',
-            tag:''
+            tag:'',
+            imgUrl:'https://storage.googleapis.com/adrobucket/1533079976777anonymous.jpg',
+            isImage :false
         }
     },
-    methods:{
+    methods:{ 
         submitEditor(){
             console.log("direct lah")
             console.log(this.title, this.myHTML, this.tag)
@@ -68,10 +81,35 @@ export default {
                 this.$router.replace('/home')
             })
             .catch(function(err){
+                swal({
+                    title: 'Error!',
+                    text: err.message,
+                    type: 'error',
+                    confirmButtonText: 'Cool'
+                })
+                 this.$router.replace('/home')
+            })
+            
+        },
+        handleFileUpload : function(e){
+            this.file = e.target.files[0]
+        },
+        submitFile:function(){
+            let formData = new FormData()
+            formData.append('image', this.file)
+            console.log(formData)
+            axios
+            .post('http://35.240.133.182/upload', formData)
+            .then(function(data){
+                console.log(data.data.link)
+                this.imgUrl = data.data.link
+                this.isImage = true
+            })
+            .catch(function(err){
                 console.log(err.message)
             })
             
-        },    
+        }    
     },
 }
 </script>

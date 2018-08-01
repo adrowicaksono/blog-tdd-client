@@ -21,6 +21,9 @@
             <div>
               <AsideCard/>
             </div>
+            <div>
+              <Comment v-bind:comments="comments"/>
+            </div>
           </div>
       </div>
     <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
@@ -30,9 +33,11 @@
 <script>
 // @ is an alias to /src
 
+import Comment from '@/components/Comment.vue'
 import HelloWorld from '@/components/HelloWorld.vue'
 import Page from '@/components/Page.vue'
 import AsideCard from '@/components/AsideCard.vue'
+
 import { mapAction } from 'vuex'
 import axios from 'axios' 
 
@@ -42,6 +47,7 @@ export default {
     HelloWorld,
     Page,
     AsideCard,
+    Comment,  
   },
   data(){
         return{
@@ -50,13 +56,33 @@ export default {
             article : '',
             activePage: 1,
             isEdit : false,
+            comments : '',
         }
     },
     mounted(){
         this.getArticles()
         this.getComments()
     },
+    watch:{
+      article : function(){
+        console.log("dari home",this.article._id)
+        
+        var commentsCol = firebase.database().ref('comments/' + this.article._id);
+        commentsCol.on('value', snapshot => {
+            this.getComments(snapshot.val());
+        });
+
+      }
+    },
     methods:{
+            getComments(snapshot){
+              let tempComment = []
+              for(let i in snapshot){
+                  tempComment.push(snapshot[i])
+              }
+              this.comments = tempComment
+              console.log(this.comments)
+            },
             getArticles(){
                 axios
                 .get('http://35.198.243.67/articles',{
@@ -70,21 +96,6 @@ export default {
                     this.pages = articles.data.length
                     this.article = articles.data[0]
                     console.log(this.article.title)
-                })
-                .catch(function(err){
-                    console.log(err.message)
-                })
-            },
-            getComments(){
-                //query articleId
-                axios
-                .get(`http://35.198.243.67/comments?article_id=5b55a0786d0d6a38bf3a1202`,{
-                    headers:{
-                        token:localStorage.getItem("token")
-                    }
-                })
-                .then(function(comments){
-                    // console.log(comments.data)
                 })
                 .catch(function(err){
                     console.log(err.message)
@@ -107,7 +118,8 @@ export default {
             showPage(){
               let idx = this.activePage - 1
               this.article = this.articles[idx]
-            }
+              
+            },
     },
     computed:{
          
